@@ -7,11 +7,16 @@
   "extends": "standard-with-typescript",
   "overrides": [],
   "parserOptions": {
-    "ecmaVersion": "latest"
+    "ecmaVersion": "latest",
+    "project": "**/tsconfig.json"
   },
+  "plugins": ["@typescript-eslint"],
   "rules": {
     "quotes": 0,
     "semi": 0,
-    "space-before-function-paren": 0
+    "space-before-function-paren": 0,
+    "@typescript-eslint/quotes": 0,
+    "@typescript-eslint/no-var-requires": 0,
+    "@typescript-eslint/semi": 0
   }
 }
