@@ -1,0 +1,28 @@
+version: "1.0"
+services:
+  postgres:
+    container_name: nettbutikk_compose
+    image: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - default
+    ports:
+      - 5432:5432
+  pgadmin:
+    container_name: nettbutikk_viewer_compose
+    image: dpage/pgadmin4
+    depends_on:
+      - postgres
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=password
+    networks:
+      - default
+    ports:
+      - 4000:80
+networks:
+  default:
+    external: true
+    name: postgres_network
