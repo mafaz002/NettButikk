@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const { GraphQLObjectType, GraphQLInt, GraphQLString } = require("graphql");
+const { GraphQLObjectType, GraphQLInt, GraphQLString, GraphQLNonNull } = require("graphql");
 const { ProductType } = require("./types");
 const Connection = require("../database/connection");
 const RootMutation = new GraphQLObjectType({
@@ -18,7 +18,23 @@ const RootMutation = new GraphQLObjectType({
         addProduct: {
             type: ProductType,
             args: {
-                id: { type: GraphQLInt },
+                id: { type: new GraphQLNonNull(GraphQLInt) },
+                name: { type: new GraphQLNonNull(GraphQLString) },
+                quantity: { type: new GraphQLNonNull(GraphQLInt) },
+                price: { type: new GraphQLNonNull(GraphQLInt) }
+            },
+            resolve(_, args) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    const db = new Connection("products");
+                    const result = yield db.create(args);
+                    return result;
+                });
+            }
+        },
+        updateProduct: {
+            type: ProductType,
+            args: {
+                id: { type: new GraphQLNonNull(GraphQLInt) },
                 name: { type: GraphQLString },
                 quantity: { type: GraphQLInt },
                 price: { type: GraphQLInt }
@@ -26,7 +42,20 @@ const RootMutation = new GraphQLObjectType({
             resolve(_, args) {
                 return __awaiter(this, void 0, void 0, function* () {
                     const db = new Connection("products");
-                    const result = yield db.mutate(args);
+                    const result = yield db.update(args);
+                    return result;
+                });
+            }
+        },
+        deleteProduct: {
+            type: ProductType,
+            args: {
+                id: { type: new GraphQLNonNull(GraphQLInt) }
+            },
+            resolve(_, args) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    const db = new Connection("products");
+                    const result = yield db.delete(args.id);
                     return result;
                 });
             }

@@ -32,7 +32,35 @@ class Connection {
         }
         return res.join(",");
     }
-    mutate(data) {
+    queryAll() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const queryString = `SELECT * FROM ${this.table}`;
+            try {
+                throw new Error("Mafaz");
+                // const result = await this.db.query(queryString);
+                // this.db.end();
+                // return result.rows;
+            }
+            catch (error) {
+                console.log("QueryAllError", error);
+                throw new Error("Hello" + error);
+            }
+        });
+    }
+    queryById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const queryString = `SELECT * FROM ${this.table} WHERE id=${id}`;
+            try {
+                const result = yield this.db.query(queryString);
+                this.db.end();
+                return result.rows[0];
+            }
+            catch (error) {
+                throw new Error(error);
+            }
+        });
+    }
+    create(data) {
         return __awaiter(this, void 0, void 0, function* () {
             const keys = Object.keys(data);
             const values = Object.values(data);
@@ -40,6 +68,41 @@ class Connection {
             const queryString = `INSERT INTO ${this.table}(${keys.join(",")}) VALUES(${placeholders}) RETURNING *`;
             try {
                 const result = yield this.db.query(queryString, values);
+                this.db.end();
+                return result.rows[0];
+            }
+            catch (error) {
+                throw new Error(error);
+            }
+        });
+    }
+    update(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const keys = Object.keys(data);
+            let newValues = "";
+            for (const key of keys) {
+                if (key === "id") {
+                    continue;
+                }
+                newValues = newValues.concat(` ,${key}='${data[key]}'`);
+            }
+            newValues = newValues.slice(2);
+            try {
+                const queryString = `UPDATE ${this.table} SET ${newValues} WHERE id=${data.id} RETURNING *`;
+                const result = yield this.db.query(queryString);
+                this.db.end();
+                return result.rows[0];
+            }
+            catch (error) {
+                throw new Error(error);
+            }
+        });
+    }
+    delete(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const queryString = `DELETE FROM ${this.table} WHERE id=${id} RETURNING *`;
+            try {
+                const result = yield this.db.query(queryString);
                 this.db.end();
                 return result.rows[0];
             }
