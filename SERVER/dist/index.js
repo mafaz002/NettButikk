@@ -1,11 +1,21 @@
-"use strict";
-var _a;
-const express = require("express");
-const dotenv = require("dotenv");
-const { graphqlHTTP } = require("express-graphql");
-const schema = require("./schema");
+import { ApolloServer } from "@apollo/server";
+import { startStandaloneServer } from "@apollo/server/standalone";
+import { loadFiles } from "@graphql-tools/load-files";
+import { mergeResolvers } from "@graphql-tools/merge";
+import dotenv from "dotenv";
+import Connection from "./database/connection";
+import { productResolver } from "./schema/resolvers/product";
 dotenv.config();
-const app = express();
-const PORT = (_a = process.env.PORT) !== null && _a !== void 0 ? _a : 4000;
-app.use("/graphql", graphqlHTTP({ schema }));
-app.listen(PORT, () => console.log(`Server listening to port ${PORT}`));
+const server = new ApolloServer({
+    typeDefs: await loadFiles("./schema/typeDefs/**/*.graphql"),
+    resolvers: mergeResolvers([productResolver])
+});
+const { url } = await startStandaloneServer(server, {
+    listen: {
+        port: process.env.PORT ?? 5000
+    },
+    context: async () => ({
+        db: new Connection()
+    })
+});
+console.log(`Server listening to port ${url}`);
