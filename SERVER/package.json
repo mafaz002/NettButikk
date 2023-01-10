@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "lint": "eslint . --ext .ts",
     "start:ts": "tsc -w",
-    "start:js": "nodemon dist/index.js",
+    "start:js": "nodemon --experimental-specifier-resolution=node dist/index.js",
     "start": "concurrently npm:start:*"
   },
   "husky": {
@@ -23,10 +24,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@apollo/server": "^4.3.0",
+    "@graphql-tools/load-files": "^6.6.1",
+    "@graphql-tools/merge": "^8.3.14",
     "dotenv": "^16.0.3",
-    "express": "^4.18.2",
-    "express-graphql": "^0.12.0",
-    "graphql": "^15.3.0",
+    "graphql": "^16.6.0",
     "pg": "^8.8.0"
   },
   "devDependencies": {

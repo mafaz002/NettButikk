@@ -1,22 +1,21 @@
-const { Client } = require("pg");
-const dotenv = require("dotenv");
+import pg from "pg";
+import dotenv from "dotenv";
 
 dotenv.config();
 
 class Connection {
-  table: string;
-  db: typeof Client;
+  db: pg.Client;
 
-  constructor(table: string) {
+  constructor() {
+    const { Client } = pg;
     const { HOST, USER, PASSWORD, DATABASE, DB_PORT } = process.env;
 
-    this.table = table;
     this.db = new Client({
       host: HOST,
       user: USER,
       password: PASSWORD,
       database: DATABASE,
-      port: DB_PORT
+      port: DB_PORT as unknown as number
     });
 
     this.db.connect();
@@ -32,8 +31,8 @@ class Connection {
     return res.join(",");
   }
 
-  async queryAll(): Promise<Array<Record<string, unknown>>> {
-    const queryString = `SELECT * FROM ${this.table}`;
+  async queryAll(table: string): Promise<Array<Record<string, unknown>>> {
+    const queryString = `SELECT * FROM ${table}`;
 
     try {
       const result = await this.db.query(queryString);
@@ -44,8 +43,8 @@ class Connection {
     }
   }
 
-  async queryById(id: number): Promise<Record<string, unknown>> {
-    const queryString = `SELECT * FROM ${this.table} WHERE id=${id}`;
+  async queryById(id: number, table: string): Promise<Record<string, unknown>> {
+    const queryString = `SELECT * FROM ${table} WHERE id=${id}`;
 
     try {
       const result = await this.db.query(queryString);
@@ -57,12 +56,13 @@ class Connection {
   }
 
   async create(
-    data: Record<string, unknown>
+    data: Record<string, unknown>,
+    table: string
   ): Promise<Record<string, unknown>> {
     const keys = Object.keys(data);
     const values = Object.values(data);
     const placeholders = this.getPlaceHolders(keys.length);
-    const queryString = `INSERT INTO ${this.table}(${keys.join(
+    const queryString = `INSERT INTO ${table}(${keys.join(
       ","
     )}) VALUES(${placeholders}) RETURNING *`;
 
@@ -76,7 +76,8 @@ class Connection {
   }
 
   async update(
-    data: Record<string, unknown>
+    data: Record<string, unknown>,
+    table: string
   ): Promise<Record<string, unknown>> {
     const keys = Object.keys(data);
     let newValues = "";
@@ -93,7 +94,7 @@ class Connection {
     newValues = newValues.slice(2);
 
     try {
-      const queryString = `UPDATE ${this.table} SET ${newValues} WHERE id=${
+      const queryString = `UPDATE ${table} SET ${newValues} WHERE id=${
         data.id as number
       } RETURNING *`;
       const result = await this.db.query(queryString);
@@ -104,8 +105,8 @@ class Connection {
     }
   }
 
-  async delete(id: number): Promise<Record<string, unknown>> {
-    const queryString = `DELETE FROM ${this.table} WHERE id=${id} RETURNING *`;
+  async delete(id: number, table: string): Promise<Record<string, unknown>> {
+    const queryString = `DELETE FROM ${table} WHERE id=${id} RETURNING *`;
 
     try {
       const result = await this.db.query(queryString);
@@ -117,6 +118,4 @@ class Connection {
   }
 }
 
-module.exports = Connection;
-
-export {};
+export default Connection;
