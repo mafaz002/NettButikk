@@ -4,7 +4,7 @@ import { loadFiles } from "@graphql-tools/load-files";
 import { mergeResolvers } from "@graphql-tools/merge";
 import dotenv from "dotenv";
 import Connection from "./database/connection";
-import { productResolver } from "./schema/resolvers/product";
+import productResolver from "./schema/resolvers/products";
 dotenv.config();
 const server = new ApolloServer({
     typeDefs: await loadFiles("./schema/typeDefs/**/*.graphql"),
