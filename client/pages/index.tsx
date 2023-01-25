@@ -1,5 +1,11 @@
+import styled from "styled-components";
+
+const Title = styled.div`
+  color: red;
+`;
+
 const Home = () => {
-  return <div>Home</div>;
+  return <Title>Home</Title>;
 };
 
 export default Home;
