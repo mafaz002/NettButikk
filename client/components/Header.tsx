@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import styled, { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
@@ -30,27 +31,51 @@ const SubContainer = styled.div`
   margin-top: 1rem;
 `;
 
-const FlexItem = styled.div`
+const FlexItem = styled.div<{ active?: boolean }>`
   user-select: none;
   font-family: "Oswald", sans-serif;
   font-weight: bold;
   color: green;
   font-size: 2rem;
+  border-bottom: ${(props) => (props.active ? "2px solid red" : "none")};
   &:hover {
     cursor: pointer;
   }
 `;
 
 const Header = () => {
+  const router = useRouter();
+
+  const handleClick = (path: string) => {
+    router.push(path);
+  };
+
+  const getActiveTab = () => router.asPath.split("/")[1];
+
   return (
     <MainContainer>
       <GlobalStyle />
       <div>
         <MainTitle>VERDIGE SMIL NETTBUTIKK</MainTitle>
         <SubContainer>
-          <FlexItem>Home</FlexItem>
-          <FlexItem>Shop</FlexItem>
-          <FlexItem>About</FlexItem>
+          <FlexItem
+            active={getActiveTab() === ""}
+            onClick={() => handleClick("/")}
+          >
+            Home
+          </FlexItem>
+          <FlexItem
+            active={getActiveTab() === "products"}
+            onClick={() => handleClick("/products")}
+          >
+            Shop
+          </FlexItem>
+          <FlexItem
+            active={getActiveTab() === "about"}
+            onClick={() => handleClick("/about")}
+          >
+            About
+          </FlexItem>
         </SubContainer>
       </div>
     </MainContainer>
