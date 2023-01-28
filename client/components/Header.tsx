@@ -1,12 +1,6 @@
 import { useRouter } from "next/router";
 import styled, { createGlobalStyle } from "styled-components";
 
-const GlobalStyle = createGlobalStyle`
-  body {
-   margin: 0; 
-  }
-`;
-
 const MainContainer = styled.div`
   width: 100%;
   height: 10rem;
@@ -54,7 +48,6 @@ const Header = () => {
 
   return (
     <MainContainer>
-      <GlobalStyle />
       <div>
         <MainTitle>VERDIGE SMIL NETTBUTIKK</MainTitle>
         <SubContainer>
